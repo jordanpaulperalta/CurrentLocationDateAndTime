@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Your Location on Google Maps</title>
+    <style>
+      #map {
+        display: flex;
+        justify-content: center;
+        justify-self: center;
+        height: 94vh;
+        border-radius: 5px;
+      }
+      #dateTime {
+        font-size: 2em;
+        padding: 5px;
+        margin: 5px;
+      }
+      body {
+        background-color: slategrey;
+        margin: 2;
+        padding: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <h1 id="dateTime"></h1>
+    <div id="longitude"></div>
+    <div id="latitude"></div>
+    <script>
+      function displayDateTime() {
+        var now = new Date();
+        var dateTime =
+          'Today is ' +
+          now.toLocaleDateString() +
+          '. ' +
+          'The current time on your location is ' +
+          now.toLocaleTimeString();
+        document.getElementById('dateTime').textContent = dateTime;
+      }
+      setInterval(displayDateTime, 1000);
+
+      var map;
+      var long;
+
+      function initMap() {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          var latitude = 51.044308;
+          var longitude = -114.063087;
+          //You can a custom value or use position.coords.latitude/position.coords.longitude
+
+          var pos = { lat: latitude, lng: longitude };
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: pos,
+            zoom: 8,
+          });
+          var marker = new google.maps.Marker({ position: pos, map: map });
+
+          // Start the zoom animation
+          var zoomLevel = 8;
+          var zoomInterval = setInterval(function () {
+            zoomLevel++;
+            map.setZoom(zoomLevel);
+            if (zoomLevel >= 15) {
+              clearInterval(zoomInterval);
+            }
+          }, 200); // Change zoom level every 1000ms
+        });
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(
+          browserHasGeolocation
+            ? 'Error: The Geolocation service failed.'
+            : "Error: Your browser doesn't support geolocation."
+        );
+        infoWindow.open(map);
+      }
+    </script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB9FDg182wMHYkakME7jgULxzGyr6t0m9U&callback=initMap"
+    ></script>
+  </body>
+</html>
